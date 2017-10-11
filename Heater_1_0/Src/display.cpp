@@ -10,9 +10,15 @@ void display::pixel(UG_S16 x , UG_S16 y ,UG_COLOR c){
 	else screen_area[x][y] = 0;
 }
 display::display(){
-
+//<<<<<<< HEAD
 	/*TODO: set uGUI init*/
-
+	//void (display::*func) (UG_S16 x , UG_S16 y ,UG_COLOR c);
+	//func = &display::pixel;
+	
+//=======
+	void (display::*func) (UG_S16 x , UG_S16 y ,UG_COLOR c);
+	//func = &display::pixel;
+	//for(int i =0; i<3; i++);
 	//UG_Init(gui, func, 128, 128);
 }
 display::~display(){
