@@ -13,11 +13,15 @@ class display{
 		UG_GUI gui;
 	public:
 		display();
+		void set_pixel(UG_S16 x, UG_S16 y);
+		void reset_pixel(UG_S16 x, UG_S16 y);
 	void set_a(uint8_t in);
-	void pixel(UG_S16 x , UG_S16 y ,UG_COLOR c);
+	
 		~display();
 	
 };
 
+
+void pixel(UG_S16 x , UG_S16 y ,UG_COLOR c);
 
 #endif
