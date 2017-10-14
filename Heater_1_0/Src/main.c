@@ -35,7 +35,6 @@
 
 /* USER CODE BEGIN Includes */
 #include "display.h"
-#include "ugui.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -68,10 +67,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	uint8_t screen_area[128][128];
 	display Display;
-	UG_Init(&Display.gui, pixel, 128, 128);
-	
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
