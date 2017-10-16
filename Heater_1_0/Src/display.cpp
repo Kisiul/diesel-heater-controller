@@ -8,6 +8,76 @@ void Lcd_Pixel(UG_S16 x, UG_S16 y, UG_COLOR color){
 	else screen[x][y] = 0;
 }
 
+void Lcd_send_command(int cmd){
+	lcdRS(1);
+	lcdRD(1);
+	lcdWR(0);
+	lcdCD(1);
+	lcdCE(0);
+	lcdDB(cmd);
+	lcdCE(1);
+	HAL_Delay(1);
+}
+
+void Lcd_send_data(int data){
+	lcdRS(1);
+	lcdRD(1);
+	lcdWR(0);
+	lcdCD(0);
+	lcdCE(0);
+	lcdDB(data);
+	lcdCE(1);
+	HAL_Delay(1);
+}
+
+void Lcd_reset(void){
+	lcdRS(0);
+	HAL_Delay(10);
+	lcdRS(1);
+}
+
+int Lcd_status_check(int sta){
+	int ret;
+	Lcd_set_read();
+	lcdRS(1);
+	lcdRD(0);
+	lcdWR(1);
+	lcdCD(1);
+	lcdCE(0);
+	HAL_Delay(1);
+	lcdCE(1);
+	switch(sta){
+		case 0:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
+		break;
+		case 1:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_14);
+		break;
+		case 2:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_13);
+		break;
+		case 3:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_12);
+		break;
+		case 4:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11);
+		break;
+		case 5:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10);
+		break;
+		case 6:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9);
+		break;
+		case 7:
+			ret = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8);
+		break;
+
+		
+	}
+	Lcd_set_write();
+	lcdRS(1);
+	return(ret);
+}
 void lcdWR(int a){
 	if(a) HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
 	else HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET); 
