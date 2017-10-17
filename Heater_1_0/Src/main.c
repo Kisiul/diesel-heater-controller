@@ -13,7 +13,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-char * screen_ptr;
+
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE END PV */
 
@@ -29,8 +29,8 @@ char * screen_ptr;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	char screen[SCREEN_HEIGHT*SCREEN_WIDTH]={0};
-	screen_ptr = screen;
+	//char screen[SCREEN_HEIGHT*SCREEN_WIDTH]={0};
+	//screen_ptr = screen;
   /* USER CODE END 1 */
   /* MCU Configuration----------------------------------------------------------*/
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -41,14 +41,12 @@ int main(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
-
   /* USER CODE BEGIN 2 */
 Fan(1);
 Ignition(0);
 Valve(0);
 
 Display_Init();
-Lcd_Pixel(63,63,1);
 Lcd_print_screen();
 Ignition(1);
   /* USER CODE END 2 */

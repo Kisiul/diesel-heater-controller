@@ -4593,7 +4593,7 @@ void UG_DrawLine( UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG_COLOR c )
 {
    UG_S16 n, dx, dy, sgndx, sgndy, dxabs, dyabs, x, y, drawx, drawy;
 
-   if ( x2 < x1 )
+ /*  if ( x2 < x1 )
    {
       n = x2;
       x2 = x1;
@@ -4604,7 +4604,7 @@ void UG_DrawLine( UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG_COLOR c )
       n = y2;
       y2 = y1;
       y1 = n;
-   }
+   }*/
 
    /* Is hardware acceleration available? */
    if ( gui->driver[DRIVER_DRAW_LINE].state & DRIVER_ENABLED )

@@ -1,11 +1,10 @@
 #include "display.h"
 
-extern char * screen_ptr;
-
+char screen[SCREEN_WIDTH/8][SCREEN_HEIGHT];
 
 void Lcd_Pixel(UG_S16 x, UG_S16 y, UG_COLOR color){
-	if(color) screen_ptr[x+(y*SCREEN_WIDTH)] = 1;
-	else screen_ptr[x+(y*SCREEN_WIDTH)] = 0;
+	if(color) screen[x/8][y] |= (1<<(7-x%8));
+	else screen[x/8][y] &= ~(1<<(7-x%8));
 }
 
 void Lcd_print_screen(void){
@@ -18,13 +17,9 @@ void Lcd_print_screen(void){
 			while(!Lcd_status_check(0));
 			Lcd_send_command(LCD_AUTO_WRITE);
 	
-	for(int i=0; i<128; i++){
-		for(int j=0; j<16; j++){
-			unsigned int serial_data = 0;
-			for(int k=0; k<8; k++){
-				serial_data = (screen_ptr[((j*8)+k)+(i*SCREEN_WIDTH)] << (7-k));
-				}
-			Lcd_send_data(serial_data);
+	for(int i=0; i<SCREEN_HEIGHT; i++){
+		for(int j=0; j<SCREEN_WIDTH/8; j++){
+			Lcd_send_data(screen[j][i]);
 			}
 		}
 				Lcd_send_command(LCD_AUTO_RESET);
@@ -35,6 +30,8 @@ void Lcd_print_screen(void){
 			Lcd_send_command(LCD_SET_ADDRESS_POINTER);
 	}
 
+	
+	
 
 void Lcd_send_command(int cmd){
 	lcdRS(1);
