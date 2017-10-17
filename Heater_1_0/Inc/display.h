@@ -8,13 +8,15 @@
 #define SCREEN_WIDTH 128
 
 void Lcd_Pixel(UG_S16 x, UG_S16 y, UG_COLOR color);
+void Lcd_print_screen(void);
 void Lcd_set_write(void);
 void Lcd_set_read(void);
 void Lcd_send_command(int cmd);
 void Lcd_send_data(int data);
 void Lcd_reset(void);
 int Lcd_status_check(int sta);
-
+void pseudo_delay(void);
+void Lcd_Init(void);
 
 
 void lcdWR(int a);
