@@ -16,8 +16,47 @@ void Ignition(int a){
 	else HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
 }
 
+int Temperature(char a){
+	ADC_ChannelConfTypeDef sConfig;
+	switch(a){
+		case 1:
+			sConfig.Channel = ADC_CHANNEL_1;
+		break;
+		case 2:
+			sConfig.Channel = ADC_CHANNEL_2;
+		break;
+	}
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+	HAL_ADC_Start (&hadc1);
+	HAL_ADC_PollForConversion (&hadc1, 1000);
+	unsigned int conv = HAL_ADC_GetValue(&hadc1);
+	HAL_ADC_Stop(&hadc1);
+	float voltage = conv * 0.0008219;
 
+	float temperature = sqrt(2196200+((1.8639-voltage)/0.00000388))-1481.96;
+	return (int)temperature;
+}
 
+unsigned int Opt_sensor(void){
+	ADC_ChannelConfTypeDef sConfig;
+	sConfig.Channel = ADC_CHANNEL_3;
+	  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+	HAL_ADC_Start (&hadc1);
+	HAL_ADC_PollForConversion (&hadc1, 1000);
+	unsigned int conv = HAL_ADC_GetValue(&hadc1);
+	HAL_ADC_Stop(&hadc1);
+	return conv;
+}
 
 /* ADC1 init function */
 
@@ -43,6 +82,22 @@ void MX_ADC1_Init(void)
     /**Configure Regular Channel 
     */
   sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+	
+	sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+	
+	sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)

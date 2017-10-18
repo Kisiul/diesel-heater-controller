@@ -8,6 +8,7 @@
 #include "display.h"
 #include "ugui.h"
 #include "interface.h"
+#include "regulator.h"
 
 /* USER CODE END Includes */
 
@@ -45,9 +46,9 @@ int main(void)
 Fan(1);
 Ignition(0);
 Valve(0);
-
+Regulator_Init();
 Display_Init();
-Lcd_print_screen();
+HAL_Delay(500);
 Ignition(1);
   /* USER CODE END 2 */
 
@@ -56,7 +57,11 @@ Ignition(1);
   while (1)
   {
   /* USER CODE END WHILE */
-
+		Average_temp();
+		Set_pwr();
+		Gauge_display();
+		if(Opt_sensor()<2000)Ignition(1);
+		else Ignition(0);
 		
   /* USER CODE BEGIN 3 */
 
