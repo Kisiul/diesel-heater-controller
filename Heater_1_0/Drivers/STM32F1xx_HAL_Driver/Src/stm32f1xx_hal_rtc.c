@@ -1192,6 +1192,7 @@ void HAL_RTC_AlarmIRQHandler(RTC_HandleTypeDef* hrtc)
   
   /* Change RTC state */
   hrtc->State = HAL_RTC_STATE_READY; 
+	
 }
 
 /**

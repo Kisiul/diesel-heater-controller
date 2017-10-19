@@ -52,6 +52,33 @@ void Gauge_display(void){
 	UG_PutString(68, 59, Itoa(Get_Set_temp(), liczba));
 	Lcd_print_screen();
 }
+
+void Log_display(void){
+	UG_FillScreen(C_BLACK);
+	UG_PutString(1,2,"UpTime:");
+	UG_PutString(56,2,Itoa(Up_Time()/3600, liczba));
+	UG_PutString(72,2,":");
+	UG_PutString(80,2,Itoa((Up_Time()/60)%60, liczba));
+	UG_PutString(96,2,":");
+	UG_PutString(104,2,Itoa(Up_Time()%60, liczba));
+	
+	UG_DrawLine(1,11,1,52, C_WHITE);
+	UG_DrawLine(1, 31, 128, 31, C_WHITE);
+	
+	for(char i=0;i<120;i++)if(Get_Temp_Log(i)!=205)UG_DrawPixel(i+1, 31+(Get_Set_temp()-Get_Temp_Log(i)), C_WHITE);
+	
+	UG_DrawLine(1,56,1,115, C_WHITE);
+	UG_DrawLine(1, 110, 128, 110, C_WHITE);
+	
+	for(char i=0;i<120;i++)if(Get_EGT_Log(i)!=205)UG_DrawPixel(i+1, 110-Get_EGT_Log(i)/2, C_WHITE);
+	
+	UG_DrawLine(1,118,1,127, C_WHITE);
+	UG_DrawLine(1, 127, 128, 127, C_WHITE);
+	
+	for(char i=0;i<120;i++)if(Get_PWR_Log(i)!=205)UG_DrawPixel(i+1, 127-(Get_PWR_Log(i)/10), C_WHITE);
+	
+	Lcd_print_screen();
+}
 char* Itoa(int i, char b[]){
     char const digit[] = "0123456789";
     char* p = b;

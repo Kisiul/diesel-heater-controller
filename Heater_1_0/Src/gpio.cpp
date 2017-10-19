@@ -2,6 +2,7 @@
 
 
 ADC_HandleTypeDef hadc1;
+char keyboard[4][4];
 
 void Fan(int a){
 	if(a) HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
@@ -27,7 +28,7 @@ int Temperature(char a){
 		break;
 	}
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -46,7 +47,7 @@ unsigned int Opt_sensor(void){
 	ADC_ChannelConfTypeDef sConfig;
 	sConfig.Channel = ADC_CHANNEL_3;
 	  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -58,6 +59,13 @@ unsigned int Opt_sensor(void){
 	return conv;
 }
 
+void HAL_GPIO_EXTI_Callback  ( uint16_t  GPIO_Pin ){
+	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_1);
+	keyboard[0][0]++;
+}
+char Get_keyboard(char i){
+	return keyboard[0][0];
+}
 /* ADC1 init function */
 
 void MX_ADC1_Init(void)
@@ -157,6 +165,9 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10 
+                          |GPIO_PIN_11, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PB12 PB13 PB14 PB15 */
   GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;

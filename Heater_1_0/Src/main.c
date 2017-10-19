@@ -39,10 +39,12 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
   MX_RTC_Init();
+	MX_GPIO_Init();
+  MX_ADC1_Init();
+  
   /* USER CODE BEGIN 2 */
+
 Fan(1);
 Ignition(0);
 Valve(0);
@@ -59,11 +61,21 @@ Ignition(1);
   /* USER CODE END WHILE */
 		Average_temp();
 		Set_pwr();
-		Gauge_display();
-		if(Opt_sensor()<2000)Ignition(1);
-		else Ignition(0);
+		//if(Second_interval_1())Log_Temp();
+		if(Opt_sensor()<2000){
+			Ignition(1);
+					
+		}
+		else{
+			Ignition(0);
+					//Log_display();
+		}
+		//Gauge_display();
+		if(Get_keyboard(1)%2)Log_display();
+		else Gauge_display();
+		//if(Second_interval_1())Log_Temp();
 		
-  /* USER CODE BEGIN 3 */
+		/* USER CODE BEGIN 3 */
 
   }
   /* USER CODE END 3 */

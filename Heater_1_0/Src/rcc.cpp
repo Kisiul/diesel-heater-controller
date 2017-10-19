@@ -1,10 +1,56 @@
 #include "stm32f1xx_hal.h"
 #include "rcc.h"
 #include "gpio.h"
+#include "regulator.h"
+#include "interface.h"
+
 
 RTC_HandleTypeDef hrtc;
+unsigned int sys_ticked;
+
+void Set_alarm(int when){
+	HAL_RTC_DeactivateAlarm(&hrtc, RTC_ALARM_A);
+	RTC_AlarmTypeDef sAlarm;
+	RTC_TimeTypeDef sTime;
+	sAlarm.Alarm = RTC_ALARM_A;
+	HAL_RTC_GetTime(&hrtc, &sTime, FORMAT_BIN);
+
+	int time = Up_Time()+when;
+	sTime.Hours = time/3600;
+	sTime.Minutes = (time/60)%60;
+	sTime.Seconds = time%60;
+	sAlarm.AlarmTime = sTime;
+	HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, FORMAT_BIN);
+	
+	HAL_NVIC_SetPriority(RTC_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(RTC_IRQn);
+	HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+}
+
+int Up_Time(void){
+	RTC_TimeTypeDef sTime;
+	HAL_RTC_GetTime(&hrtc, &sTime, FORMAT_BIN);
+	int seconds = sTime.Seconds + sTime.Minutes*60+sTime.Hours*3600;
+	return seconds;
+}
+
+void AlarmAEventCallback(RTC_HandleTypeDef* hrtc){
+	Set_alarm(1);
+	Log_Temp();
+}
+
+void HAL_SYSTICK_Callback(void){
+	sys_ticked++;
+}
+
+unsigned int Get_sys_ticked(void){
+	return sys_ticked;
+}
 /** System Clock Configuration
 */
+
+
 void SystemClock_Config(void)
 {
 
@@ -65,11 +111,11 @@ void MX_RTC_Init(void)
     Error_Handler();
   }
 
-  sTime.Hours = 0x1;
+  sTime.Hours = 0x0;
   sTime.Minutes = 0x0;
   sTime.Seconds = 0x0;
 
-  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
   {
     Error_Handler();
   }
@@ -83,5 +129,9 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-
+	HAL_NVIC_SetPriority(RTC_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(RTC_IRQn);
+	HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+	Set_alarm(1);
 }

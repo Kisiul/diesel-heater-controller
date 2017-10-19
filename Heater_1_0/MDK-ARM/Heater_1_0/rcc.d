@@ -31,3 +31,7 @@ heater_1_0\rcc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc_ex.h
 heater_1_0\rcc.o: ../Inc/rcc.h
 heater_1_0\rcc.o: ../Inc/gpio.h
 heater_1_0\rcc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+heater_1_0\rcc.o: ../Inc/regulator.h
+heater_1_0\rcc.o: ../Inc/interface.h
+heater_1_0\rcc.o: ../Inc/display.h
+heater_1_0\rcc.o: ../Inc/ugui.h

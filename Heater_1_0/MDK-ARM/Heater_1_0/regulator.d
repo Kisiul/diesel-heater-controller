@@ -31,3 +31,4 @@ heater_1_0\regulator.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 heater_1_0\regulator.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc.h
 heater_1_0\regulator.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc_ex.h
 heater_1_0\regulator.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+heater_1_0\regulator.o: ../Inc/rcc.h
