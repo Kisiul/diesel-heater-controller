@@ -12,6 +12,6 @@ void Valve(int a);
 void Ignition(int a);
 int Temperature(char a);
 unsigned int Opt_sensor(void);
-char Get_keyboard(char i);
-
+char Get_keyboard(void);
+void Reset_keyboard(void);
 #endif

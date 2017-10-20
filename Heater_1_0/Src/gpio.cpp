@@ -2,7 +2,7 @@
 
 
 ADC_HandleTypeDef hadc1;
-char keyboard[4][4];
+char keyboard;
 
 void Fan(int a){
 	if(a) HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
@@ -60,11 +60,79 @@ unsigned int Opt_sensor(void){
 }
 
 void HAL_GPIO_EXTI_Callback  ( uint16_t  GPIO_Pin ){
-	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_1);
-	keyboard[0][0]++;
+	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
+	char col;
+	GPIO_InitTypeDef GPIO_InitStruct;
+	
+	GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	
+	GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14 
+                          |GPIO_PIN_15, GPIO_PIN_SET);
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)) col = '1';
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9)) col = '2';
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10)) col = '3';
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11)) col = 'A';
+	switch(GPIO_Pin){
+		case GPIO_PIN_12:
+			if(col=='1')keyboard = '1';
+			if(col=='2')keyboard = '2';
+			if(col=='3')keyboard = '3';
+			if(col=='A')keyboard = 'A';
+			break;
+		case GPIO_PIN_13:
+			if(col=='1')keyboard = '4';
+			if(col=='2')keyboard = '5';
+			if(col=='3')keyboard = '6';
+			if(col=='A')keyboard = 'B';
+			break;
+		case GPIO_PIN_14:
+			if(col=='1')keyboard = '7';
+			if(col=='2')keyboard = '8';
+			if(col=='3')keyboard = '9';
+			if(col=='A')keyboard = 'C';
+			break;
+		case GPIO_PIN_15:
+			if(col=='1')keyboard = '*';
+			if(col=='2')keyboard = '0';
+			if(col=='3')keyboard = '#';
+			if(col=='A')keyboard = 'D';
+			break;
+	}
+	  /*Configure GPIO pins : PB10 PB11 PB8 PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10 
+                          |GPIO_PIN_11, GPIO_PIN_RESET);
+	
+	
+	  /*Configure GPIO pins : PB12 PB13 PB14 PB15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	
+	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 }
-char Get_keyboard(char i){
-	return keyboard[0][0];
+char Get_keyboard(void){
+	return keyboard;
+}
+
+void Reset_keyboard(void){
+	keyboard = 0;
 }
 /* ADC1 init function */
 
@@ -151,7 +219,7 @@ void MX_GPIO_Init(void)
                           |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14 
                           |GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB0 PB1 PB2 */
@@ -180,13 +248,16 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6 
                           |GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+ 
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
+	keyboard = 0;
 }
 
 /**

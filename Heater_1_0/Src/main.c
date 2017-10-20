@@ -52,6 +52,7 @@ Regulator_Init();
 Display_Init();
 HAL_Delay(500);
 Ignition(1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -60,23 +61,21 @@ Ignition(1);
   {
   /* USER CODE END WHILE */
 		Average_temp();
-		Set_pwr();
-		//if(Second_interval_1())Log_Temp();
+		if(Minute_interval_1()) Set_pwr();
 		if(Opt_sensor()<2000){
 			Ignition(1);
 					
 		}
 		else{
 			Ignition(0);
-					//Log_display();
+
 		}
 		//Gauge_display();
-		if(Get_keyboard(1)%2)Log_display();
-		else Gauge_display();
+		menu();
 		//if(Second_interval_1())Log_Temp();
 		
 		/* USER CODE BEGIN 3 */
-
+Lcd_print_screen();
   }
   /* USER CODE END 3 */
 

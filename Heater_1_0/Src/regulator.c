@@ -2,9 +2,10 @@
 
 char temperature1_av[20];
 char temperature2_av[20];
-char temperature_log[128][3];
+//char temperature_log[128][3];
 char Temp1_index;
 char TempLog_index;
+char time_of_minute;
 
 char P_value;
 char I_value;
@@ -26,15 +27,19 @@ Timestamp_s = Timestamp;
 Timestamp_5s = Timestamp;
 Timestamp_ns = Timestamp;
 Timestamp_min = Timestamp;
-	for(char i = 0; i<20; i++) temperature1_av[i] = 20;
-	for(char i = 0; i<20; i++) temperature2_av[i] = 20;
-	for(char j=0;j<3;j++)for(char i = 0; i<120; i++) temperature_log[i][j] = 255;
+time_of_minute = Timestamp;
+	for(char i = 0; i<20; i++) temperature1_av[i] = 70;
+	for(char i = 0; i<20; i++) temperature2_av[i] = 70;
+	//for(char j=0;j<3;j++)for(char i = 0; i<120; i++) temperature_log[i][j] = 255;
 	
 Power = 0;
 Set_temperature = 25;
 Temperature_difference = 0;
 Temp1_index = 0;
 TempLog_index = 0;
+
+Average_temp();
+Set_pwr();
 }
 void Average_temp(void){
 	if(Temp1_index >= 19) Temp1_index = 0;
@@ -63,7 +68,7 @@ char Get_Set_temp(void){
 char Get_pwr(void){
 	return Power;
 }
-
+/*
 void Log_Temp(void){
 	if(TempLog_index>=119){
 		for(char j=0;j<3;j++)for(char i=1;i<120;i++)temperature_log[i-1][j]=temperature_log[i][j];
@@ -96,6 +101,7 @@ int Get_EGT_Log(char i){
 int Get_PWR_Log(char i){
 	return temperature_log[i][2]-50;
 }
+*/
 void Set_pwr(void){
 	Temperature_difference = Set_temperature - Get_Temp(2);
 	
@@ -129,7 +135,14 @@ char Second_interval_n(char n){
 char Minute_interval_1(void){
 		if(Up_Time()>Timestamp_min+60){
 			Timestamp_min = Up_Time();
+			time_of_minute = 0;
 			return 1;
 	}
 	else return 0;
+}
+char Get_time_of_minute(void){
+	return time_of_minute;
+}
+void Inc_time_of_minute(void){
+	time_of_minute++;
 }

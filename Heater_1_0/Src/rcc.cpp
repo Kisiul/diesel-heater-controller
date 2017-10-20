@@ -8,25 +8,6 @@
 RTC_HandleTypeDef hrtc;
 unsigned int sys_ticked;
 
-void Set_alarm(int when){
-	HAL_RTC_DeactivateAlarm(&hrtc, RTC_ALARM_A);
-	RTC_AlarmTypeDef sAlarm;
-	RTC_TimeTypeDef sTime;
-	sAlarm.Alarm = RTC_ALARM_A;
-	HAL_RTC_GetTime(&hrtc, &sTime, FORMAT_BIN);
-
-	int time = Up_Time()+when;
-	sTime.Hours = time/3600;
-	sTime.Minutes = (time/60)%60;
-	sTime.Seconds = time%60;
-	sAlarm.AlarmTime = sTime;
-	HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, FORMAT_BIN);
-	
-	HAL_NVIC_SetPriority(RTC_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(RTC_IRQn);
-	HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
-}
 
 int Up_Time(void){
 	RTC_TimeTypeDef sTime;
@@ -35,13 +16,12 @@ int Up_Time(void){
 	return seconds;
 }
 
-void AlarmAEventCallback(RTC_HandleTypeDef* hrtc){
-	Set_alarm(1);
-	Log_Temp();
-}
+
 
 void HAL_SYSTICK_Callback(void){
 	sys_ticked++;
+//	if(!(sys_ticked%15000))Log_Temp();
+	if(!(sys_ticked%1000))Inc_time_of_minute();
 }
 
 unsigned int Get_sys_ticked(void){
@@ -85,7 +65,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+  HAL_SYSTICK_Config((HAL_RCC_GetHCLKFreq()/1000));
 
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
@@ -133,5 +113,5 @@ void MX_RTC_Init(void)
 	HAL_NVIC_EnableIRQ(RTC_IRQn);
 	HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
-	Set_alarm(1);
+
 }

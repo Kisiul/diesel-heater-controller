@@ -3,20 +3,73 @@
 
 UG_GUI gui;
 char liczba[5];
-char menu_page;
+char menu_state;
+char menu_next_state;
 
 void Display_Init(){
 	Lcd_Init();
 	UG_Init(&gui,Lcd_Pixel,SCREEN_WIDTH,SCREEN_HEIGHT);
 	UG_FillScreen(C_BLACK);
-	UG_FontSelect(&FONT_8X8);
+	UG_FontSelect(&FONT_6X8);
 	UG_SetBackcolor(C_BLACK);
 	UG_SetForecolor(C_WHITE);
 	UG_PutString(25, 50, "Krzysztof\nDabrowski");
 	UG_PutString(18, 70, "733 411 819");
 	
-	menu_page = 0;
+	menu_state = MENU_STATE_NO_MENU;
+	menu_next_state = MENU_STATE_MAIN_PAGE;
 	Lcd_print_screen();
+}
+
+void menu(void){
+	switch (menu_state){
+		case MENU_STATE_NO_MENU:
+			menu_next_state = MENU_STATE_MAIN_PAGE;
+		
+			break;
+		case MENU_STATE_MAIN_PAGE:
+			UG_FillRoundFrame(10,28,118,70,5,C_BLACK);
+			UG_DrawRoundFrame(10,28,118,70,5,C_WHITE);
+			UG_PutString(13,30,"A - Stala temp.");
+			UG_PutString(13,40,"B - Stala moc");
+			UG_PutString(13,50,"C - Wylacz");
+			UG_PutString(13,60,"D - Pomoc");
+			if(Get_keyboard()=='A')menu_next_state = MENU_STATE_SET_TEMP;
+			else if(Get_keyboard()=='B')menu_next_state = MENU_STATE_SET_PWR;
+			else if(Get_keyboard()=='C')menu_next_state = MENU_STATE_OFF;
+			else if(Get_keyboard()=='D')menu_next_state = MENU_STATE_HELP;
+			else menu_next_state = MENU_STATE_NO_MENU;
+		break;
+		case MENU_STATE_SET_TEMP:
+			UG_FillRoundFrame(10,28,118,70,5,C_BLACK);
+			UG_DrawRoundFrame(10,28,118,70,5,C_WHITE);
+			UG_PutString(13,30,"Temp:");
+			menu_next_state = MENU_STATE_NO_MENU;
+		break;
+		case MENU_STATE_SET_PWR:
+			UG_FillRoundFrame(10,28,118,70,5,C_BLACK);
+			UG_DrawRoundFrame(10,28,118,70,5,C_WHITE);
+			UG_PutString(13,30,"Moc:");
+			menu_next_state = MENU_STATE_NO_MENU;
+		break;
+		case MENU_STATE_OFF:
+			UG_FillRoundFrame(10,28,118,70,5,C_BLACK);
+			UG_DrawRoundFrame(10,28,118,70,5,C_WHITE);
+			UG_PutString(13,30,"Off");
+			menu_next_state = MENU_STATE_NO_MENU;
+		break;
+				case MENU_STATE_HELP:
+			UG_FillRoundFrame(10,28,118,70,5,C_BLACK);
+			UG_DrawRoundFrame(10,28,118,70,5,C_WHITE);
+			UG_PutString(13,30,"Krzysztof\nDabrowski\n733411819");
+			menu_next_state = MENU_STATE_NO_MENU;
+		break;
+
+	}
+	if(Get_keyboard()){
+		menu_state = menu_next_state;
+		Reset_keyboard();
+	}
 }
 
 void Gauge_display(void){
@@ -34,7 +87,7 @@ void Gauge_display(void){
 	
 	UG_DrawFrame(65,36,126, 52, C_WHITE);
 	UG_FillFrame(67,38,67+Bar_chart(Get_Temp(2),0,50),50, C_WHITE);
-	UG_PutString(85, 4, "ACT");
+	UG_PutString(81, 4, "TEMP");
 	UG_PutString(89, 20, Itoa(Get_Temp(2), liczba));
 	
 	UG_DrawFrame(2,108,61, 124, C_WHITE);
@@ -46,13 +99,15 @@ void Gauge_display(void){
 	UG_FillFrame(67,110,67+Bar_chart(Get_pwr(),0,100),122, C_WHITE);
 	UG_PutString(85, 76, "PWR");
 	UG_PutString(89, 92, Itoa(Get_pwr(), liczba));
-		
+	UG_DrawLine(67,106,67+Bar_chart(Get_time_of_minute(),0,59),106,C_WHITE);	
 	
 	UG_PutString(34, 59, "set:");
 	UG_PutString(68, 59, Itoa(Get_Set_temp(), liczba));
-	Lcd_print_screen();
-}
 
+	//UG_PutChar(Get_keyboard(), 100, 58, C_BLACK, C_WHITE);			
+	//Lcd_print_screen();
+}
+/*
 void Log_display(void){
 	UG_FillScreen(C_BLACK);
 	UG_PutString(1,2,"UpTime:");
@@ -77,8 +132,11 @@ void Log_display(void){
 	
 	for(char i=0;i<120;i++)if(Get_PWR_Log(i)!=205)UG_DrawPixel(i+1, 127-(Get_PWR_Log(i)/10), C_WHITE);
 	
+	//UG_PutString(2,63, Itoa(Get_sys_ticked(), liczba));
 	Lcd_print_screen();
 }
+*/
+
 char* Itoa(int i, char b[]){
     char const digit[] = "0123456789";
     char* p = b;
@@ -97,16 +155,6 @@ char* Itoa(int i, char b[]){
         i = i/10;
     }while(i);
     return b;
-}
-
-void Draw_Dial(char x0, char y0, char value){
-	char x1,y1,x2,y2;
-	x1 = x0-25*cos(value*(2*PI/100)-(PI/4));
-	y1 = y0-25*sin(value*(2*PI/100)-(PI/4));
-	x2 = x0-30*cos(value*(2*PI/100)-(PI/4));
-	y2 = y0-30*sin(value*(2*PI/100)-(PI/4));
-	
-	UG_DrawLine(x1,y1,x2,y2, C_WHITE);
 }
 
 char Bar_chart(int value, int min, int max){
